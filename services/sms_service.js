@@ -10,12 +10,11 @@ const restAPI = plivo.RestAPI({
 var exports = module.exports = {};
 
 exports.send_message = function (data) {
-    var status_callback_url = config.host.url + '/messages/' + data.id + '/report';
     var params = {
         'dst': data.dst,
         'src': config.plivo.senderId,
         'text': data.text,
-        'url': status_callback_url
+        'url': data.url
     };
 
     restAPI.send_message(params, function (status, response) {

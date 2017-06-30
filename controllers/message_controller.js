@@ -5,26 +5,29 @@ var http_request = require('request');
 var config = require('config');
 
 var router = express.Router();
-router.use(body_parser.urlencoded({extended: true}));
+router.use(body_parser.json());
 
 var parse = function (payload) {
+    let status_callback_url = config.host.url + '/messages/' + payload.conversationid + '-' + payload.id + '/report';
     return {
         "dst": payload.recipient.phone,
         "text": payload.body,
-        "id": payload.id
+        "url": status_callback_url
     }
 };
 
 var updateStatusInXola = function (request) {
-    var conversationId = request.param('convoid-messageid').split(" ")[0];
-    var messageId = request.param('convoid-messageid').split(" ")[1];
+    const convoMessageId = 'convoMmessageId';
+    var conversationId = request.param(convoMessageId).split("-")[0];
+    var messageId = request.param(convoMessageId).split("-")[1];
     var status = request.body.status;
 
     var options = {
+        method: 'POST',
         url: config.xola.url + '/conversations/' + conversationId + '/messages/' + messageId,
         port: config.xola.port,
         headers: {
-            'X-API-KEY': ''
+            'X-API-KEY': config.user.apiKey
         },
         json: {
             status: status
@@ -32,6 +35,7 @@ var updateStatusInXola = function (request) {
     };
 
     function callback(error, response, body) {
+        console.log("respone" + response.body);
         if (!error && response.statusCode == 200) {
             console.log("status updated");
         }
@@ -41,11 +45,12 @@ var updateStatusInXola = function (request) {
 };
 
 router.post('/', function (request, response) {
+    console.log(request);
     sms_service.send_message(parse(request.body.data));
     return response.send();
 });
 
-router.post('/:convoid-messageid/report/', function (request, response) {
+router.put('/:convoMmessageId/report', function (request, response) {
     updateStatusInXola(request);
     return response.send();
 });

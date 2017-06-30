@@ -1,4 +1,12 @@
 {
+  "user": {
+    "id": "",
+    "apiKey": ""
+  },
+  "host": {
+    "url": "http://localhost",
+    "port": 3333
+  },
   "xola_api": {
     "url": "http://xola.local",
     "port": 80
