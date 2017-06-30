@@ -1,0 +1,19 @@
+{
+  "host": {
+    "url": "http://localhost",
+    "port": 3333
+  },
+  "xola": {
+    "url": "http://xola.local",
+    "port": 80
+  },
+  "legolas": {
+    "host": "http:legolas.local",
+    "port": 9000
+  },
+  "plivo": {
+    "authId": "<authId>",
+    "authToken": "<authToken>",
+    "senderId": "<senderId>"
+  }
+}

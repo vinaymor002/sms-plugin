@@ -1,0 +1,11 @@
+{
+  "xola_api": {
+    "url": "http://xola.local",
+    "port": 80
+  },
+  "plivo": {
+    "authId": "MAZTMXNTE0NMJHOTG0ND",
+    "authToken": "ODVmNjg2YzIyYjFiYTAzNzNmZjAwYmNhMjBkYzE1",
+    "senderId": "xola_dev"
+  }
+}

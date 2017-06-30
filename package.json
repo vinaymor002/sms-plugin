@@ -1,0 +1,22 @@
+{
+  "name": "Sms-plugin",
+  "version": "0.1.0",
+  "main": "server.js",
+  "dependencies": {
+    "sqlite3": "3.1.8",
+    "express": "4.15.3",
+    "config": "1.26.1",
+    "plivo": "0.4.1",
+    "body-parser": "1.17.2"
+  },
+  "devDependencies": {
+    "jasmine": "2.6.0",
+    "simple-mock": "0.8.0",
+    "should": "11.2.1",
+    "node-mocks-http": "1.6.3",
+    "jshint": "^2.9.2"
+  },
+  "scripts": {
+    "test": "./node_modules/.bin/jasmine spec"
+  }
+}
