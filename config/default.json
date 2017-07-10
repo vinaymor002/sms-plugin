@@ -8,7 +8,7 @@
     "port": 80
   },
   "legolas": {
-    "host": "http:legolas.local",
+    "host": "http:localhost",
     "port": 9000
   },
   "plivo": {
