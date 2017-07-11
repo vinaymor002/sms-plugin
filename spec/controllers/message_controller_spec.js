@@ -44,4 +44,24 @@ describe("Message Controller Tests", function () {
 
         controller.handle(request, response);
     });
+
+    it("post message", function (done) {
+        spyOn(sms_service, 'send_message');
+        var response = buildResponse();
+        var request = http_mocks.createRequest({
+            method: 'POST',
+            url: '/',
+            body: {
+                "eventName": "plugin.install",
+            }
+        });
+
+        response.on('end', function () {
+            expect(response.statusCode).toEqual(200);
+            expect(sms_service.send_message).not.toHaveBeenCalled();
+            done()
+        });
+
+        controller.handle(request, response);
+    });
 });

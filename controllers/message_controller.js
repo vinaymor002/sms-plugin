@@ -8,7 +8,7 @@ var router = express.Router();
 router.use(body_parser.json());
 
 var parse = function (payload) {
-    let status_callback_url = config.host.url + '/messages/' + payload.conversationid + '-' + payload.id + '/report';
+    let status_callback_url = config.host.url  + ':' + config.host.port + '/messages/' + payload.conversationid + '-' + payload.id + '/report';
     return {
         "dst": payload.recipient.phone,
         "text": payload.body,
@@ -18,14 +18,13 @@ var parse = function (payload) {
 
 var updateStatusInXola = function (request) {
     const convoMessageId = 'convoMmessageId';
-    var conversationId = request.param(convoMessageId).split("-")[0];
-    var messageId = request.param(convoMessageId).split("-")[1];
+    var conversationId = request.params(convoMessageId).split("-")[0];
+    var messageId = request.params(convoMessageId).split("-")[1];
     var status = request.body.status;
 
     var options = {
         method: 'POST',
-        url: config.xola.url + '/conversations/' + conversationId + '/messages/' + messageId,
-        port: config.xola.port,
+        url: config.xola.url + ':' + config.xola.port + '/conversations/' + conversationId + '/messages/' + messageId,
         headers: {
             'X-API-KEY': config.user.apiKey
         },
@@ -46,12 +45,18 @@ var updateStatusInXola = function (request) {
 
 router.post('/', function (request, response) {
     console.log(request);
-    sms_service.send_message(parse(request.body.data));
+    if (request.body.eventName == 'conversation.message.create') {
+        sms_service.send_message(parse(request.body.data));
+    }
     return response.send();
 });
 
-router.put('/:convoMmessageId/report', function (request, response) {
+router.post('/:convoMmessageId/report', function (request, response) {
     updateStatusInXola(request);
+    return response.send();
+});
+
+router.get('/', function (request, response) {
     return response.send();
 });
 
