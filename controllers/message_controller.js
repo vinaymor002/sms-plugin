@@ -18,13 +18,13 @@ var parse = function (payload) {
 
 var updateStatusInXola = function (request) {
     const convoMessageId = 'convoMmessageId';
-    var conversationId = request.params(convoMessageId).split("-")[0];
-    var messageId = request.params(convoMessageId).split("-")[1];
-    var status = request.body.status;
+    var conversationId = request.params[convoMessageId].split("-")[0];
+    var messageId = request.params[convoMessageId].split("-")[1];
+    var status = request.body.Status || request.query.Status;
 
     var options = {
-        method: 'POST',
-        url: config.xola.url + ':' + config.xola.port + '/conversations/' + conversationId + '/messages/' + messageId,
+        method: 'PUT',
+        url: config.xola.url + ':' + config.xola.port + '/api/conversations/' + conversationId + '/messages/' + messageId,
         headers: {
             'X-API-KEY': config.user.apiKey
         },
@@ -34,9 +34,10 @@ var updateStatusInXola = function (request) {
     };
 
     function callback(error, response, body) {
-        console.log("respone" + response.body);
         if (!error && response.statusCode == 200) {
             console.log("status updated");
+        } else {
+            console.log(error);
         }
     }
 
@@ -44,8 +45,7 @@ var updateStatusInXola = function (request) {
 };
 
 router.post('/', function (request, response) {
-    console.log(request);
-    if (request.body.eventName == 'conversation.message.create') {
+    if (request.body.eventName == 'conversation.message.cre ate') {
         sms_service.send_message(parse(request.body.data));
     }
     return response.send();
