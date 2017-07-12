@@ -1,4 +1,8 @@
 {
+  "user": {
+    "id": "",
+    "apiKey": ""
+  },
   "host": {
     "url": "http://localhost",
     "port": 3333
@@ -6,10 +10,6 @@
   "xola": {
     "url": "http://xola.local",
     "port": 80
-  },
-  "legolas": {
-    "host": "http:localhost",
-    "port": 9000
   },
   "plivo": {
     "authId": "<authId>",
