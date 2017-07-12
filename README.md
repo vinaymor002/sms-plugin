@@ -3,10 +3,15 @@
 ## Installation
 
 Clone and run `npm install`. 
+
+## Update Configs
+Update xola user details under user section.
+Update plivo account details.
+Update other urls as per the local setup.
  
 ## Development
 
-To start the server run `npm start` and visit [localhost:3333](http://localhost:3333).
+To start the server run `npm start` and server will be up at [localhost:3333](http://localhost:3333) by default.
 
 ## Config
 
