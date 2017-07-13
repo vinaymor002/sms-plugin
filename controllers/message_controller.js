@@ -6,6 +6,7 @@ var config = require('config');
 
 var router = express.Router();
 router.use(body_parser.json());
+router.use(body_parser.urlencoded({extended: true}));
 
 var parse = function (payload) {
     let status_callback_url = config.host.url  + ':' + config.host.port + '/messages/' + payload.conversationid + '-' + payload.id + '/report';
@@ -21,12 +22,12 @@ var updateStatusInXola = function (request) {
     var conversationId = request.params[convoMessageId].split("-")[0];
     var messageId = request.params[convoMessageId].split("-")[1];
     var status = request.body.Status || request.query.Status;
-
     var options = {
         method: 'PUT',
         url: config.xola.url + ':' + config.xola.port + '/api/conversations/' + conversationId + '/messages/' + messageId,
-        headers: {
-            'X-API-KEY': config.user.apiKey
+        auth: {
+            'user': config.user.name,
+            'pass': config.user.password
         },
         json: {
             status: status
@@ -45,7 +46,7 @@ var updateStatusInXola = function (request) {
 };
 
 router.post('/', function (request, response) {
-    if (request.body.eventName == 'conversation.message.cre ate') {
+    if (request.body.eventName == 'conversation.message.create') {
         sms_service.send_message(parse(request.body.data));
     }
     return response.send();

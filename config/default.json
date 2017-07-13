@@ -1,7 +1,9 @@
 {
   "user": {
     "id": "",
-    "apiKey": ""
+    "name": "",
+    "apiKey": "",
+    "password": ""
   },
   "host": {
     "url": "http://localhost",
