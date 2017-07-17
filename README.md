@@ -25,8 +25,8 @@ legolas api is configured to `http://localhost:9000` and xola api is configured 
     2. use the JSON payload to register the plugin with legolas
     3. update the user credentials in .env file for secure environments.(.env is not checked into git)
      
-##API
-###POST /messages
+## API
+### POST /messages
 ##### expected payload structure
 `{
     "eventName": "conversation.message.create",
@@ -42,4 +42,4 @@ legolas api is configured to `http://localhost:9000` and xola api is configured 
      }
  }`
  
-###POST /messages/{id}/report: this end point is exposed to plivo as callback for status update.
+### POST /messages/{id}/report: this end point is exposed to plivo as callback for status update.
