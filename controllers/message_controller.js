@@ -3,6 +3,7 @@ var sms_service = require('../services/sms_service');
 var body_parser = require('body-parser');
 var http_request = require('request');
 var config = require('config');
+require('dotenv').config();
 
 var router = express.Router();
 router.use(body_parser.json());
@@ -26,8 +27,8 @@ var updateStatusInXola = function (request) {
         method: 'PUT',
         url: config.xola.url + ':' + config.xola.port + '/api/conversations/' + conversationId + '/messages/' + messageId,
         auth: {
-            'user': config.user.name,
-            'pass': config.user.password
+            'user': process.env.USER_NAME || config.user.name,
+            'pass': process.env.USER_PASSWORD || config.user.password
         },
         json: {
             status: status
