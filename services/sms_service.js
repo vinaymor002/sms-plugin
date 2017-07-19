@@ -9,7 +9,7 @@ const restAPI = plivo.RestAPI({
 
 var exports = module.exports = {};
 
-exports.send_message = function (data) {
+exports.send_message = function (data, onError) {
     var params = {
         'dst': data.dst,
         'src': config.plivo.senderId,
@@ -18,6 +18,9 @@ exports.send_message = function (data) {
     };
 
     restAPI.send_message(params, function (status, response) {
+        if (status === 400) {
+            onError(response);
+        }
         console.log('Status: ', status);
         console.log('API Response:\n', response);
     });
