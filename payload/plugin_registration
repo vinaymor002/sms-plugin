@@ -10,21 +10,10 @@
   ],
   "faqs": null,
   "webhookUrl": "http://259ab094.ngrok.io/messages",
-  "link": "http://10.10.10.1:3333",
-  "developer": "Xola dev",
-  "email": "xolafriends@picthrive.com",
   "permissions": [
     "ROLE_SELLER_ADMIN"
   ],
   "configGroups": null,
-  "termsOfService": "https://www.picthrive.com/terms-conditions/",
-  "privacyPolicy": "https://www.picthrive.com/privacy-policy/",
-  "ui": {
-    "menu": "customers",
-    "label": "XOL3446",
-    "url": "http://localhost:8080",
-    "icon": ""
-  },
   "user": {
     "id": "57f33db8a48cf22e0b8b4569",
     "name": "Vinay Mor",
