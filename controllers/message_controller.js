@@ -30,7 +30,7 @@ var parse = function (payload) {
 
 router.post('/', function (request, response) {
     var onError = function (response) {
-        xola_service.updateStatusInXola(request.body.data.conversationid, request.body.data.id, 'Error', response.error)
+        xola_service.updateStatusInXola(request.body.data.conversationid, request.body.data.id, 'error', response.error)
     };
 
     if (request.body.eventName == 'conversation.message.create') {

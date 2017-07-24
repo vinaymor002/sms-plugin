@@ -15,7 +15,7 @@ exports.updateStatusInXola = function (conversationId, messageId, status, reason
         },
         json: {
             status: status,
-            reason: reason
+            error: reason
         }
     };
 
