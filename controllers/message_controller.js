@@ -13,7 +13,7 @@ router.use(body_parser.json());
 router.use(body_parser.urlencoded({extended: true}));
 
 var parse = function (payload, onParse) {
-    let status_callback_url = config.host.url + ':' + config.host.port + '/messages/' + payload.conversationid + '-' +
+    let status_callback_url = config.host.url + ':' + config.host.port + '/messages/' + payload.conversation.id + '-' +
         payload.id + '/report';
     var phoneNumberString = payload.recipient.phone;
     var phoneNumberObject;
@@ -26,7 +26,7 @@ var parse = function (payload, onParse) {
             "url": status_callback_url
         })
     } else {
-        xola_service.getSellerCountryCode(payload.sellerid, function (countryCode) {
+        xola_service.getSellerCountryCode(payload.seller.id, function (countryCode) {
             phoneNumberObject = phoneUtil.parse(phoneNumberString, countryCode);
             onParse({
                 "dst": phoneUtil.format(phoneNumberObject, PNF.E164),
@@ -39,7 +39,7 @@ var parse = function (payload, onParse) {
 
 router.post('/', function (request, response) {
     var onError = function (response) {
-        xola_service.updateStatusInXola(request.body.data.conversationid, request.body.data.id, 'error', response.error)
+        xola_service.updateStatusInXola(request.body.data.conversation.id, request.body.data.id, 'error', response.error)
     };
 
     if (request.body.eventName == 'conversation.message.create') {
