@@ -36,8 +36,8 @@ exports.getSellerCountryCode = function (sellerId, onSuccess) {
         method: 'GET',
         url: config.xola.url + ':' + config.xola.port + '/api/sellers/' + sellerId,
         auth: {
-            'user': process.env.USER_NAME || config.user.name,
-            'pass': process.env.USER_PASSWORD || config.user.password
+            'user': process.env.XOLA_USER_NAME || config.user.name,
+            'pass': process.env.XOLA_USER_PASSWORD || config.user.password
         }
     };
 

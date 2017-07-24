@@ -42,7 +42,7 @@ router.post('/', function (request, response) {
         xola_service.updateStatusInXola(request.body.data.conversation.id, request.body.data.id, 'error', response.error)
     };
 
-    if (request.body.eventName == 'conversation.message.create') {
+    if (request.body.eventName == 'conversation.message.create' && request.body.data.type == 'sms') {
         parse(request.body.data, function (parsedData) {
             sms_service.send_message(parsedData, onError);
         })
