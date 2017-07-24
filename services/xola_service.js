@@ -29,3 +29,27 @@ exports.updateStatusInXola = function (conversationId, messageId, status, reason
 
     http_request(options, callback);
 };
+
+exports.getSellerCountryCode = function (sellerId, onSuccess) {
+
+    var options = {
+        method: 'GET',
+        url: config.xola.url + ':' + config.xola.port + '/api/sellers/' + sellerId,
+        auth: {
+            'user': process.env.USER_NAME || config.user.name,
+            'pass': process.env.USER_PASSWORD || config.user.password
+        }
+    };
+
+    function callback(error, response, body) {
+        if (!error && response.statusCode == 200) {
+            body = JSON.parse(response.body);
+            console.log("fetched country code : " + body["countryCode"] + " for sellerid: " + sellerId);
+            onSuccess(body.countryCode)
+        } else {
+            console.log("error fetching seller country code: " + response.statusCode);
+        }
+    }
+
+    http_request(options, callback);
+};

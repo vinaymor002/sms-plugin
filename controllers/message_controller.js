@@ -2,6 +2,7 @@ const express = require('express');
 var sms_service = require('../services/sms_service');
 var xola_service = require('../services/xola_service');
 var body_parser = require('body-parser');
+var config = require('config');
 
 var PNF = require('google-libphonenumber').PhoneNumberFormat;
 let PhoneNumberUtil = require('google-libphonenumber').PhoneNumberUtil;
@@ -11,20 +12,28 @@ var router = express.Router();
 router.use(body_parser.json());
 router.use(body_parser.urlencoded({extended: true}));
 
-var parse = function (payload) {
+var parse = function (payload, onParse) {
     let status_callback_url = config.host.url + ':' + config.host.port + '/messages/' + payload.conversationid + '-' +
         payload.id + '/report';
     var phoneNumberString = payload.recipient.phone;
-    let phoneNumberObject = phoneUtil.parse(phoneNumberString, payload.countrycode);
+    var phoneNumberObject;
 
     if (phoneUtil.isPossibleNumberString(phoneNumberString, PhoneNumberUtil.UNKNOWN_REGION_)) {
         phoneNumberObject = phoneUtil.parse(phoneNumberString, PhoneNumberUtil.UNKNOWN_REGION_);
-    }
-
-    return {
-        "dst": phoneUtil.format(phoneNumberObject, PNF.E164),
-        "text": payload.body,
-        "url": status_callback_url
+        onParse({
+            "dst": phoneUtil.format(phoneNumberObject, PNF.E164),
+            "text": payload.body,
+            "url": status_callback_url
+        })
+    } else {
+        xola_service.getSellerCountryCode(payload.sellerid, function (countryCode) {
+            phoneNumberObject = phoneUtil.parse(phoneNumberString, countryCode);
+            onParse({
+                "dst": phoneUtil.format(phoneNumberObject, PNF.E164),
+                "text": payload.body,
+                "url": status_callback_url
+            })
+        });
     }
 };
 
@@ -34,7 +43,9 @@ router.post('/', function (request, response) {
     };
 
     if (request.body.eventName == 'conversation.message.create') {
-        sms_service.send_message(parse(request.body.data), onError);
+        parse(request.body.data, function (parsedData) {
+            sms_service.send_message(parsedData, onError);
+        })
     }
     return response.send();
 });
