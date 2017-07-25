@@ -13,8 +13,10 @@ router.use(body_parser.json());
 router.use(body_parser.urlencoded({extended: true}));
 
 var parse = function (payload, onParse) {
-    let status_callback_url = config.host.url + ':' + config.host.port + '/messages/' + payload.conversation.id + '-' +
-        payload.id + '/report';
+    let status_callback_url = config.host.url + ':' + config.host.port +
+        '/sellers/' + payload.seller.id +
+        '/conversations/' + payload.conversation.id +
+        '/messages/' + payload.id + '/report';
     var phoneNumberString = payload.recipient.phone;
     var phoneNumberObject;
 
@@ -37,9 +39,9 @@ var parse = function (payload, onParse) {
     }
 };
 
-router.post('/', function (request, response) {
+router.post('/messages', function (request, response) {
     var onError = function (response) {
-        xola_service.updateStatusInXola(request.body.data.conversation.id, request.body.data.id, 'error', response.error)
+        xola_service.updateMessageStatus(request.body.data.conversation.id, request.body.data.id, 'error', response.error)
     };
 
     if (request.body.eventName == 'conversation.message.create' && request.body.data.type == 'sms') {
@@ -50,13 +52,20 @@ router.post('/', function (request, response) {
     return response.send();
 });
 
-router.post('/:convoMmessageId/report', function (request, response) {
-    const convoMessageId = 'convoMmessageId';
-    var conversationId = request.params[convoMessageId].split("-")[0];
-    var messageId = request.params[convoMessageId].split("-")[1];
-    var status = request.body.Status || request.query.Status;
+router.post('/sellers/:sellerId/conversations/:conversationId/messages/:messageId/report', function (request, response) {
+    var sellerId = request.params['sellerId'];
+    var conversationId = request.params['conversationId'];
+    var messageId = request.params['messageId'];
 
-    xola_service.updateStatusInXola(conversationId, messageId, status, status);
+    var status = request.body.Status;
+    var units = request.body.Units;
+    var ParentMessageUUID = request.body.ParentMessageUUID;
+    var MessageUUID = request.body.MessageUUID;
+
+    xola_service.updateMessageStatus(conversationId, messageId, status, status);
+    if (status == 'sent' && ParentMessageUUID === MessageUUID) {
+        xola_service.updateSmsCounter(sellerId, units);
+    }
     return response.send();
 });
 

@@ -1,45 +1,28 @@
-var http_request = require('request');
-var config = require('config');
-require('dotenv').config();
+var xola_http_client = require('../clients/xola_http_client');
 
 var exports = module.exports = {};
 
-exports.updateStatusInXola = function (conversationId, messageId, status, reason) {
+exports.updateMessageStatus = function (conversationId, messageId, status, reason) {
 
-    var options = {
-        method: 'PUT',
-        url: config.xola.url + ':' + config.xola.port + '/api/conversations/' + conversationId + '/messages/' + messageId,
-        auth: {
-            'user': process.env.USER_NAME || config.user.name,
-            'pass': process.env.USER_PASSWORD || config.user.password
-        },
-        json: {
-            status: status,
-            error: reason
-        }
+    var relativeUrl = '/api/conversations/' + conversationId + '/messages/' + messageId;
+    var payload = {
+        status: status,
+        error: reason
     };
 
     function callback(error, response, body) {
         if (!error && response.statusCode == 200) {
             console.log("status updated to: " + status);
         } else {
-            console.log("error updating status: " + response.statusCode);
+            console.log("error while updating status: " + response.statusCode);
         }
     }
 
-    http_request(options, callback);
+    xola_http_client.put(relativeUrl, payload, callback);
 };
 
 exports.getSellerCountryCode = function (sellerId, onSuccess) {
-
-    var options = {
-        method: 'GET',
-        url: config.xola.url + ':' + config.xola.port + '/api/sellers/' + sellerId,
-        auth: {
-            'user': process.env.XOLA_USER_NAME || config.user.name,
-            'pass': process.env.XOLA_USER_PASSWORD || config.user.password
-        }
-    };
+    let relativeUrl = '/api/sellers/' + sellerId;
 
     function callback(error, response, body) {
         if (!error && response.statusCode == 200) {
@@ -51,5 +34,24 @@ exports.getSellerCountryCode = function (sellerId, onSuccess) {
         }
     }
 
-    http_request(options, callback);
+    xola_http_client.get(relativeUrl, callback);
+};
+
+exports.updateSmsCounter = function (sellerId, sentMessagesCount) {
+
+    let relativeUrl = '/api/sellers/' + sellerId + '/counters/sms';
+
+    let payload = {
+        count: sentMessagesCount
+    };
+
+    function callback(error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log("SMS counter updated successfully by : " + sentMessagesCount + " for seller: " + sellerId);
+        } else {
+            console.log("error updating SMS counter " + response.statusCode);
+        }
+    }
+
+    xola_http_client.put(relativeUrl, payload, callback);
 };
