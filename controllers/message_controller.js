@@ -41,7 +41,11 @@ var parse = function (payload, onParse) {
 
 router.post('/messages', function (request, response) {
     var onError = function (response) {
-        xola_service.updateMessageStatus(request.body.data.conversation.id, request.body.data.id, 'error', response.error)
+        var payload = {
+            "status": "error",
+            "error": response.error
+        };
+        xola_service.updateMessageDeliveryReport(request.body.data.conversation.id, request.body.data.id, payload)
     };
 
     if (request.body.eventName == 'conversation.message.create' && request.body.data.type == 'sms') {
@@ -62,10 +66,12 @@ router.post('/sellers/:sellerId/conversations/:conversationId/messages/:messageI
     var ParentMessageUUID = request.body.ParentMessageUUID;
     var MessageUUID = request.body.MessageUUID;
 
-    xola_service.updateMessageStatus(conversationId, messageId, status, status);
+    var payload = {"status": status};
     if (status == 'sent' && ParentMessageUUID === MessageUUID) {
-        xola_service.updateSmsCounter(sellerId, units);
+        payload["units"] = units;
     }
+
+    xola_service.updateMessageDeliveryReport(conversationId, messageId, payload);
     return response.send();
 });
 
