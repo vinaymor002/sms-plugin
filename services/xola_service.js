@@ -14,7 +14,7 @@ exports.updateMessageStatus = function (conversationId, messageId, status, reaso
         if (!error && response.statusCode == 200) {
             console.log("status updated to: " + status);
         } else {
-            console.log("error while updating status: " + response.statusCode);
+            console.log("error while updating status: " + error);
         }
     }
 
@@ -30,7 +30,7 @@ exports.getSellerCountryCode = function (sellerId, onSuccess) {
             console.log("fetched country code : " + body["countryCode"] + " for sellerid: " + sellerId);
             onSuccess(body.countryCode)
         } else {
-            console.log("error fetching seller country code: " + response.statusCode);
+            console.log("error fetching seller country code: " + error);
         }
     }
 

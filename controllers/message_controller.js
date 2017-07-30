@@ -12,7 +12,7 @@ var router = express.Router();
 router.use(body_parser.json());
 router.use(body_parser.urlencoded({extended: true}));
 
-var parse = function (payload, onParse) {
+var parse = function (payload, onParseSuccess, onParseFailure) {
     let status_callback_url = config.host.url + ':' + config.host.port +
         '/sellers/' + payload.seller.id +
         '/conversations/' + payload.conversation.id +
@@ -22,19 +22,25 @@ var parse = function (payload, onParse) {
 
     if (phoneUtil.isPossibleNumberString(phoneNumberString, PhoneNumberUtil.UNKNOWN_REGION_)) {
         phoneNumberObject = phoneUtil.parse(phoneNumberString, PhoneNumberUtil.UNKNOWN_REGION_);
-        onParse({
+        onParseSuccess({
             "dst": phoneUtil.format(phoneNumberObject, PNF.E164),
             "text": payload.body,
             "url": status_callback_url
         })
     } else {
         xola_service.getSellerCountryCode(payload.seller.id, function (countryCode) {
-            phoneNumberObject = phoneUtil.parse(phoneNumberString, countryCode);
-            onParse({
-                "dst": phoneUtil.format(phoneNumberObject, PNF.E164),
-                "text": payload.body,
-                "url": status_callback_url
-            })
+
+            try {
+                phoneNumberObject = phoneUtil.parse(phoneNumberString, countryCode);
+                onParseSuccess({
+                    "dst": phoneUtil.format(phoneNumberObject, PNF.E164),
+                    "text": payload.body,
+                    "url": status_callback_url
+                })
+            } catch (e) {
+                console.log(e.message);
+                onParseFailure(payload.conversation.id, payload.id, e.message);
+            }
         });
     }
 };
@@ -45,8 +51,12 @@ router.post('/messages', function (request, response) {
     };
 
     if (request.body.eventName == 'conversation.message.create' && request.body.data.type == 'sms') {
-        parse(request.body.data, function (parsedData) {
+        parse(request.body.data,
+            function (parsedData) {
             sms_service.send_message(parsedData, onError);
+            },
+            function (conversationId, messageId, error) {
+                xola_service.updateMessageStatus(conversationId, messageId, 'error', error);
         })
     }
     return response.send();
