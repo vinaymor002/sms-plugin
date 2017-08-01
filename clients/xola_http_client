@@ -1,0 +1,32 @@
+var http_request = require('request');
+var config = require('config');
+require('dotenv').config();
+
+var auth =  {
+    'user': process.env.USER_NAME || config.user.name,
+    'pass': process.env.USER_PASSWORD || config.user.password
+};
+var exports = module.exports = {};
+
+exports.put = function (relativeUrl, payload, callback) {
+    var url = config.xola.url + ':' + config.xola.port + relativeUrl;
+    var options = {
+        method: 'PUT',
+        url: url,
+        auth: auth,
+        json: payload
+    };
+
+    http_request(options, callback);
+};
+
+exports.get = function (relativeUrl, callback) {
+    var url = config.xola.url + ':' + config.xola.port + relativeUrl;
+    var options = {
+        method: 'GET',
+        url: url,
+        auth: auth
+    };
+
+    http_request(options, callback);
+};
